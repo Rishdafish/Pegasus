@@ -41,7 +41,10 @@ class Manager:
             self.scoreAgent(currAgent)
             temp.append(currAgent)
         
-    
+    def visualize(self): 
+        pass 
+
+
     def mergeAgents(self):
         pass
 
@@ -55,12 +58,21 @@ class Manager:
                 newAgents.append(child1, child2)
             self.generation += 1
             self.currentAgents = newAgents
+            #used for mixing/merging agents: possbiliy creating hybrids
+            newAgents.sort(key=agent.getScore(), reverse=True)
+            self.best_agents = newAgents[:50] #Getting the first 15, which are the best according to their score
+            self.mergeAgents()
             if len(self.currentAgents) > self.MaxAgents:
-                self.cutDown()
+                self.trim()
+                self.runNextGen()
             else: 
                 self.runNextGen()
+        else:
+            print("Max generations reached. Stopping evolution.")
+            self.visualize()
+            return
 
-    def cutDown(self):
+    def trim(self):
         pass
 
     def run(self):
