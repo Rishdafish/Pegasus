@@ -5,13 +5,17 @@ class agent():
         super().__init__()
         self.role = role
         self.task = task
-        self.evaluation = None
+        self.isEvaluated = False
         self.parents = []
         self.isFirstGen = isFirstGen
+        self.score = 0 
 
 
     def setParents(self, parents: list):
         self.parents = parents
+
+    def createChildren(self, parent, numChildren):
+        pass
     
     def testAgainstBest(self):
         pass 

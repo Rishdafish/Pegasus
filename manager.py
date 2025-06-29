@@ -1,6 +1,8 @@
 import random
 from .prompts import prompts
 from .worker import agent
+import os
+from openai import OpenAI
 
 
 class Manager: 
@@ -29,23 +31,37 @@ class Manager:
         self.generation = 1
         TotalRoles = prompts.themes
         Tasks = prompts.tasks
+        temp = []
         for agentidx in range(self.StartingAgents):
             agentRole = TotalRoles[agentidx]
             random_idx = random.randint(0, len(Tasks) - 1)
             agentTask = Tasks[random_idx]
             currAgent = agent(agentRole, agentTask, isFirstGen=True)
             currAgent.evaluate()
-            self.currentAgents.append(currAgent)
-    
+            self.scoreAgent(currAgent)
+            temp.append(currAgent)
+        
     
     def mergeAgents(self):
         pass
 
     def runNextGen(self):
         if self.generation <= self.maxGeneration:
-            for agent in self.currentAgents:
-                self.nextGeneration = agent.createChildren()
+            newAgents = []
+            for parent in self.currentAgents:
+                child1, child2 = agent.createChildren(parent, self.childrenPerGeneration)
+                self.scoreAgent(child1)
+                self.scoreAgent(child2)
+                newAgents.append(child1, child2)
+            self.generation += 1
+            self.currentAgents = newAgents
+            if len(self.currentAgents) > self.MaxAgents:
+                self.cutDown()
+            else: 
+                self.runNextGen()
 
+    def cutDown(self):
+        pass
 
     def run(self):
         if self.generation == 0:
@@ -55,7 +71,7 @@ class Manager:
         # Evaluate agents and prepare for next generation
         self.evaluateAgents()
         self.generation += 1
-    def scoreAgent(self):
+    def scoreAgent(self, agent: Agent() ):
         pass 
 
 
